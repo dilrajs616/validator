@@ -1,8 +1,13 @@
 from flask import request, jsonify
 from app import app
 from random import randint
-from checkEmail import email_exists
 from sendMail import sendEmail
+import asyncio
+
+async def main(receiver_email, otp):  
+    subject = "OTP"
+    message = f"OTP for sign up is: {otp}"
+    return await sendEmail(receiver_email, subject, message)
 
 @app.route('/validate', methods=["GET","POST"])
 def validate():
@@ -11,8 +16,11 @@ def validate():
     
     if request.method == "POST":
         email = request.form.get("email")
-        if not email_exists(email):
+        if not email.endswith("@gndec.ac.in"):
             return jsonify({"code":"error","message": f"invalid email received: {email}"})
         otp = randint(100000,999999)
-        sendEmail(email, "OTP for email verification", otp)
-    return jsonify({"success": "True", "otp": otp})  
+        status = asyncio.run(main(email, otp))
+        if status:
+            return jsonify({"success": "True", "otp": otp})  
+        else:
+            return jsonify({"code":"error","message": f"invalid email received: {email}"})
