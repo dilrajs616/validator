@@ -1,18 +1,1 @@
 runtime: python39
-
-entrypoint: gunicorn -b :$PORT app:app  # Make sure 'app:app' points to your Flask app
-
-# Automatic scaling
-automatic_scaling:
-  target_cpu_utilization: 0.65
-  min_instances: 1
-  max_instances: 3
-
-# Static file handling
-handlers:
-  - url: /static
-    static_dir: static
-
-# Route everything else to the app
-  - url: /.*
-    script: auto
