@@ -19,8 +19,5 @@ def validate():
         if not email.endswith("@gndec.ac.in"):
             return jsonify({"code":"error","message": f"invalid email received: {email}"})
         otp = randint(100000,999999)
-        status = asyncio.run(main(email, otp))
-        if status:
-            return jsonify({"success": "True", "otp": otp})  
-        else:
-            return jsonify({"code":"error","message": f"invalid email received: {email}"})
+        asyncio.run(main(email, otp))
+        return jsonify({"success": "True", "otp": otp})  
